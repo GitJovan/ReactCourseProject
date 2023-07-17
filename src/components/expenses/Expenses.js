@@ -5,20 +5,28 @@ import ExpensesFilter from '../expensesFilter/ExpensesFilter';
 import React, { useState } from 'react';
 
 export default function Expenses({ expensesData }) {
+  const [expanses, setExpanses] = useState(expensesData);
   const [selectedYearFilter, setSelectedYearFilter] = useState('2020');
 
   const filterChangeHandler = (year) => {
     setSelectedYearFilter(year);
+    applyFilter(year);
+  }
+
+  const applyFilter = (year) => {
+    if (!!selectedYearFilter) {
+      const filteredData = expensesData.filter(expense => expense.date.getFullYear().toString() === year);
+      setExpanses(filteredData);
+    } else {
+      setExpanses(expensesData);
+    }
   }
 
   return (
     <div>
       <Card className="expenses">
         <ExpensesFilter selected={selectedYearFilter} onFilterChange={filterChangeHandler} />
-        <ExpenseItem title={expensesData[0].title} amount={expensesData[0].amount} date={expensesData[0].date}></ExpenseItem>
-        <ExpenseItem title={expensesData[1].title} amount={expensesData[1].amount} date={expensesData[1].date}></ExpenseItem>
-        <ExpenseItem title={expensesData[2].title} amount={expensesData[2].amount} date={expensesData[2].date}></ExpenseItem>
-        <ExpenseItem title={expensesData[3].title} amount={expensesData[3].amount} date={expensesData[3].date}></ExpenseItem>
+        {expanses.map(expense => <ExpenseItem title={expense.title} amount={expense.amount} date={expense.date} key={expense.id}></ExpenseItem>)}
       </Card>
     </div>
   );
